@@ -1,4 +1,4 @@
-///! Sourced from https://github.com/NVIDIA/open-gpu-kernel-modules/blob/307159f2623d3bf45feb9177bd2da52ffbc5ddf9/src/common/sdk/nvidia/inc/ctrl/ctrla081.h
+///! Sourced from https://github.com/NVIDIA/open-gpu-kernel-modules/blob/2b436058a616676ec888ef3814d1db6b2220f2eb/src/common/sdk/nvidia/inc/ctrl/ctrla081.h
 use std::fmt;
 
 use super::ctrl2080gpu::{NV2080_GPU_MAX_NAME_STRING_LENGTH, NV_GRID_LICENSE_INFO_MAX_LENGTH};
@@ -41,6 +41,7 @@ pub struct NvA081CtrlVgpuInfo {
     pub encoder_capacity: u32,
     pub bar1_length: AlignedU64,
     pub frl_enable: u32,
+    pub vgpu_ssvid: u16,
     pub adapter_name: [u8; NV2080_GPU_MAX_NAME_STRING_LENGTH],
     pub adapter_name_unicode: [u16; NV2080_GPU_MAX_NAME_STRING_LENGTH],
     pub short_gpu_name_string: [u8; NV2080_GPU_MAX_NAME_STRING_LENGTH],
@@ -63,7 +64,7 @@ pub struct NvA081CtrlVgpuInfo {
 
 pub const NVA081_CTRL_CMD_VGPU_CONFIG_GET_VGPU_TYPE_INFO: u32 = 0xa0810103;
 
-/// This RM control command is used starting in vGPU version 19.0 (580.65.05).
+/// This RM control command is used starting in vGPU version 19.1 (580.82.02).
 ///
 /// See `NVA081_CTRL_VGPU_CONFIG_GET_VGPU_TYPE_INFO_PARAMS`
 #[repr(C)]
@@ -119,6 +120,7 @@ impl fmt::Debug for NvA081CtrlVgpuInfo {
             .field("encoder_capacity", &HexFormat(self.encoder_capacity))
             .field("bar1_length", &HexFormat(self.bar1_length))
             .field("frl_enable", &self.frl_enable)
+            .field("vgpu_ssvid", &self.vgpu_ssvid)
             .field("adapter_name", &CStrFormat(&self.adapter_name))
             .field(
                 "adapter_name_unicode",
@@ -181,10 +183,10 @@ mod test {
 
     #[test]
     fn verify_sizes() {
-        assert_eq!(mem::size_of::<NvA081CtrlVgpuInfo>(), 0x1528);
+        assert_eq!(mem::size_of::<NvA081CtrlVgpuInfo>(), 0x1530);
         assert_eq!(
             mem::size_of::<NvA081CtrlVgpuConfigGetVgpuTypeInfoParams>(),
-            0x1530
+            0x1538
         );
     }
 }
